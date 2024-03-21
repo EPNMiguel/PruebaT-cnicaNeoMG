@@ -48,6 +48,7 @@ public class ClienteService {
                 .telefono(cliente.getTelefono())
                 .contrasenia(cliente.getContrasenia())
                 .estado(cliente.getEstado())
+                .direccion(cliente.getDireccion())
                 .build();
     }
 }

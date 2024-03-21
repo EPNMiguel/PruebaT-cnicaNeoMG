@@ -15,6 +15,4 @@ public class Persona {
     String identificacion;
     String direccion;
     String telefono;
-
-
 }

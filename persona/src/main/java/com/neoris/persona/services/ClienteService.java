@@ -6,9 +6,12 @@ import com.neoris.persona.model.dto.ClienteResponse;
 import com.neoris.persona.repositories.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,5 +53,19 @@ public class ClienteService {
                 .estado(cliente.getEstado())
                 .direccion(cliente.getDireccion())
                 .build();
+    }
+
+    public ResponseEntity<Object> update(Cliente cliente) {
+        Optional<Cliente> res = clienteRepository.findById(cliente.getIdCliente());
+        if (!res.isEmpty()) {
+            clienteRepository.save(cliente);
+            return new ResponseEntity<>(
+                    HttpStatus.OK
+            );
+        } else {
+            return new ResponseEntity<>(
+                    HttpStatus.CONFLICT
+            );
+        }
     }
 }

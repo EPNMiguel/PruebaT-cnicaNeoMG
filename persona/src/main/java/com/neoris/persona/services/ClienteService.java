@@ -20,20 +20,39 @@ public class ClienteService {
 
     private final ClienteRepository clienteRepository;
 
-    public void addCliente(ClienteRequest clienteRequest) {
-        var cliente = Cliente.builder()
-                .nombre(clienteRequest.getNombre())
-                .genero(clienteRequest.getGenero())
-                .edad(clienteRequest.getEdad())
-                .identificacion(clienteRequest.getIdentificacion())
-                .direccion(clienteRequest.getDireccion())
-                .telefono(clienteRequest.getTelefono())
-                .contrasenia(clienteRequest.getContrasenia())
-                .estado(clienteRequest.getEstado())
-                .build();
+    public ResponseEntity<Object> addCliente(ClienteRequest clienteRequest) {
+        try {
+            Optional<Cliente> res = Optional.ofNullable(clienteRepository.findByIdentificacion(clienteRequest.getIdentificacion()));
+            if (res.isEmpty()) {
+                var cliente = Cliente.builder()
+                        .nombre(clienteRequest.getNombre())
+                        .genero(clienteRequest.getGenero())
+                        .edad(clienteRequest.getEdad())
+                        .identificacion(clienteRequest.getIdentificacion())
+                        .direccion(clienteRequest.getDireccion())
+                        .telefono(clienteRequest.getTelefono())
+                        .contrasenia(clienteRequest.getContrasenia())
+                        .estado(clienteRequest.getEstado())
+                        .build();
 
-        clienteRepository.save(cliente);
-        log.info("Cliente agregado " + cliente);
+                clienteRepository.save(cliente);
+                log.info("Cliente agregado " + cliente);
+                return new ResponseEntity<>(
+                        HttpStatus.CREATED
+                );
+            } else {
+                log.info("Cliente ya registrado ");
+                return new ResponseEntity<>(
+                        HttpStatus.CONFLICT
+                );
+            }
+        } catch (Exception e) {
+            log.error("error al crear cliente " + e);
+            return new ResponseEntity<>(
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+
     }
 
     public List<ClienteResponse> getAllClientes() {
@@ -56,16 +75,30 @@ public class ClienteService {
     }
 
     public ResponseEntity<Object> update(Cliente cliente) {
-        Optional<Cliente> res = clienteRepository.findById(cliente.getIdCliente());
-        if (!res.isEmpty()) {
-            clienteRepository.save(cliente);
+        try {
+            Optional<Cliente> res = Optional.ofNullable(clienteRepository.findByIdentificacion(cliente.getIdentificacion()));
+            if (!res.isEmpty()) {
+                log.info("Cliente modificado");
+                clienteRepository.save(cliente);
+                return new ResponseEntity<>(
+                        HttpStatus.OK
+                );
+            } else {
+                log.info("Cliente NO modificado");
+                return new ResponseEntity<>(
+                        HttpStatus.CONFLICT
+                );
+            }
+        }catch (Exception e){
+            log.error("No se pudo actualizar :" +e);
             return new ResponseEntity<>(
-                    HttpStatus.OK
-            );
-        } else {
-            return new ResponseEntity<>(
-                    HttpStatus.CONFLICT
+                    HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
+    }
+
+    public Cliente findByIdentificacion(String identificacion) {
+        Cliente cliente = clienteRepository.findByIdentificacion(identificacion);
+        return cliente;
     }
 }

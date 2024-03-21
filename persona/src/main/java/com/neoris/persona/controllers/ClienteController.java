@@ -20,9 +20,8 @@ public class ClienteController {
     private final ClienteService clienteService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void addCliente(@RequestBody ClienteRequest clienteRequest) {
-        this.clienteService.addCliente(clienteRequest);
+    public ResponseEntity<Object> addCliente(@RequestBody ClienteRequest clienteRequest) {
+        return this.clienteService.addCliente(clienteRequest);
     }
 
     @GetMapping
@@ -32,7 +31,7 @@ public class ClienteController {
     }
 
     @PutMapping
-    public ResponseEntity<Object> updateCliente(@RequestBody Cliente cliente){
+    public ResponseEntity<Object> updateCliente(@RequestBody Cliente cliente) {
         return clienteService.update(cliente);
     }
 

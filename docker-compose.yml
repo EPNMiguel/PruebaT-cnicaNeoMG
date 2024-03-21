@@ -1,0 +1,17 @@
+version: '3'
+services:
+
+  db-cliente:
+    container_name: db-neoris
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ms-neoris
+      MYSQL_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_RANDOM_ROOT_PASSWORD: root
+      ports:
+        3306_3306
+      expose:
+        3306
+

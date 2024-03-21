@@ -14,4 +14,5 @@ public class CuentaResponse {
     private String tipoCuenta;
     private Double saldoInicial;
     private Boolean estado;
+    private String identificacion;
 }

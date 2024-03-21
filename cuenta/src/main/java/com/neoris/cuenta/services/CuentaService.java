@@ -26,6 +26,7 @@ public class CuentaService {
                 .tipoCuenta(cuentaRequest.getTipoCuenta())
                 .saldoInicial(cuentaRequest.getSaldoInicial())
                 .estado(cuentaRequest.getEstado())
+                .identificacion(cuentaRequest.getIdentificacion())
                 .build();
 
         cuentaRepository.save(cuenta);
@@ -44,6 +45,7 @@ public class CuentaService {
                 .tipoCuenta(cuenta.getTipoCuenta())
                 .saldoInicial(cuenta.getSaldoInicial())
                 .estado(cuenta.getEstado())
+                .identificacion(cuenta.getIdentificacion())
                 .build();
 
     }

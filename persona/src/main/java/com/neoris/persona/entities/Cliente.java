@@ -1,5 +1,6 @@
 package com.neoris.persona.entities;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.*;
 

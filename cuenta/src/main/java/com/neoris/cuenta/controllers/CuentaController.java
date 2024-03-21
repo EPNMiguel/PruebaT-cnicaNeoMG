@@ -19,9 +19,8 @@ public class CuentaController {
     private final CuentaService cuentaService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createCuenta(@RequestBody CuentaRequest cuentaRequest) {
-        this.cuentaService.addCuenta(cuentaRequest);
+    public ResponseEntity<Object> createCuenta(@RequestBody CuentaRequest cuentaRequest) {
+        return this.cuentaService.addCuenta(cuentaRequest);
     }
 
     @GetMapping

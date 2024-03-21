@@ -7,6 +7,8 @@ import com.neoris.cuenta.model.dto.MovimientoResponse;
 import com.neoris.cuenta.repositories.MovimientoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.HttpURLConnection;
@@ -21,7 +23,7 @@ public class MovimientoService {
 
     private final MovimientoRepository movimientoRepository;
 
-    public void addMovimiento(MovimientoRequest movimientoRequest) {
+    public ResponseEntity<Object> addMovimiento(MovimientoRequest movimientoRequest) {
         Cuenta cuenta = new Cuenta();
         //INICIO trae una cuenta consumiendo el servicio de cuenta
 
@@ -37,19 +39,69 @@ public class MovimientoService {
             }
             scanner.close();
             log.info("RESULTADO: " + sb);
-        } catch (Exception e) {
-            log.error("No se pudo conectar a api/cuentas");
-        }
-        //FIN
-        var movimiento = Movimiento.builder()
-                .tipoMovimiento(movimientoRequest.getTipoMovimiento())
-                .numeroCuenta(movimientoRequest.getNumeroCuenta())
-                .Valor(movimientoRequest.getValor())
-                .Saldo(movimientoRequest.getSaldo())
-                .build();
+            if (!sb.isEmpty() && sb.toString().contains(movimientoRequest.getNumeroCuenta().toString())) {
+                //hay la cuenta
+                if (movimientoRequest.getTipoMovimiento().toString().equals("deposito")) {
+                    double saldo = 0.0;
+                    try {
+                        saldo = Double.parseDouble(movimientoRequest.getSaldo().toString());
 
-        movimientoRepository.save(movimiento);
-        log.info("Movimiento creado");
+                    } catch (Exception e) {
+                        log.info("no hay saldo");
+                        saldo = 0.0;
+                    }
+                    //si es deposito siempre guarda
+                    var movimiento = Movimiento.builder()
+                            .tipoMovimiento(movimientoRequest.getTipoMovimiento())
+                            .numeroCuenta(movimientoRequest.getNumeroCuenta())
+                            .Valor(movimientoRequest.getValor())
+                            .Saldo(saldo + movimientoRequest.getValor())
+                            .build();
+                    movimientoRepository.save(movimiento);
+                    log.info("Movimiento creado");
+                    return new ResponseEntity<>(
+                            HttpStatus.OK
+                    );
+                } else { //retiro
+                    //validar que saldo no quede menor a cero
+                    double tempSaldo = movimientoRequest.getSaldo() - movimientoRequest.getValor();
+                    if (tempSaldo < 0) {
+                        // no guarda
+                        log.info("Saldo Final menor a 0, no se puede guardar");
+                        return new ResponseEntity<>(
+                                HttpStatus.CONFLICT
+                        );
+                    } else {
+                        // guadar y actualiza el saldo
+                        var movimiento = Movimiento.builder()
+                                .tipoMovimiento(movimientoRequest.getTipoMovimiento())
+                                .numeroCuenta(movimientoRequest.getNumeroCuenta())
+                                .Valor(movimientoRequest.getValor())
+                                .Saldo(tempSaldo)
+                                .build();
+                        movimientoRepository.save(movimiento);
+                        log.info("Movimiento creado");
+                        return new ResponseEntity<>(
+                                HttpStatus.OK
+                        );
+                    }
+                }
+
+
+            } else {
+                //No hay cuenta
+                log.info("No hay numero de cuenta " + movimientoRequest.getNumeroCuenta().toString());
+                return new ResponseEntity<>(
+                        HttpStatus.CONFLICT
+                );
+            }
+        } catch (Exception e) {
+            log.error("No se pudo crear movimiento " + e);
+            return new ResponseEntity<>(
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+
     }
 
     public List<MovimientoResponse> getAllMovimientos() {

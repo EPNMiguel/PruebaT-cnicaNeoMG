@@ -74,26 +74,20 @@ public class ClienteService {
                 .build();
     }
 
-    public ResponseEntity<Object> update(Cliente cliente) {
+    public String update(Cliente cliente) {
         try {
             Optional<Cliente> res = Optional.ofNullable(clienteRepository.findByIdentificacion(cliente.getIdentificacion()));
             if (!res.isEmpty()) {
                 log.info("Cliente modificado");
                 clienteRepository.save(cliente);
-                return new ResponseEntity<>(
-                        HttpStatus.OK
-                );
+                return "{\"message\":\"Cliente modificado\",\"code\":0}";
             } else {
                 log.info("Cliente NO modificado");
-                return new ResponseEntity<>(
-                        HttpStatus.CONFLICT
-                );
+                return "{\"message\":\"Cliente no existe, no se puede modificar\",\"code\":1}";
             }
-        }catch (Exception e){
-            log.error("No se pudo actualizar :" +e);
-            return new ResponseEntity<>(
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
+        } catch (Exception e) {
+            log.error("No se pudo actualizar :" + e);
+            return "{\"message\":\"\"No se pudo actualizar el cliente " + e + "\",\"code\":0}";
         }
     }
 

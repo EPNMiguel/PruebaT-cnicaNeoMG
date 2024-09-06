@@ -31,7 +31,7 @@ public class ClienteController {
     }
 
     @PutMapping
-    public ResponseEntity<Object> updateCliente(@RequestBody Cliente cliente) {
+    public String updateCliente(@RequestBody Cliente cliente) {
         return clienteService.update(cliente);
     }
 

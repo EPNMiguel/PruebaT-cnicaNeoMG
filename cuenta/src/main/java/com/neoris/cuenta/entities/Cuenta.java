@@ -15,7 +15,7 @@ public class Cuenta {
     @Id
     private Long numeroCuenta;
     private String tipoCuenta;
-    private Double saldoInicial;
+    private Double saldo;
     private Boolean estado;
     private String identificacion;
 

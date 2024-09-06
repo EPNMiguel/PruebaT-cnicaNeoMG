@@ -1,6 +1,5 @@
 package com.neoris.cuenta.services;
 
-import ch.qos.logback.core.net.server.Client;
 import com.neoris.cuenta.entities.Cuenta;
 import com.neoris.cuenta.model.dto.CuentaRequest;
 import com.neoris.cuenta.model.dto.CuentaResponse;
@@ -59,7 +58,7 @@ public class CuentaService {
                         var cuenta = Cuenta.builder()
                                 .numeroCuenta(cuentaRequest.getNumeroCuenta())
                                 .tipoCuenta(cuentaRequest.getTipoCuenta())
-                                .saldoInicial(cuentaRequest.getSaldoInicial())
+                                .saldo(cuentaRequest.getSaldo())
                                 .estado(cuentaRequest.getEstado())
                                 .identificacion(cuentaRequest.getIdentificacion())
                                 .build();
@@ -103,7 +102,7 @@ public class CuentaService {
         return CuentaResponse.builder()
                 .numeroCuenta(cuenta.getNumeroCuenta())
                 .tipoCuenta(cuenta.getTipoCuenta())
-                .saldoInicial(cuenta.getSaldoInicial())
+                .saldo(cuenta.getSaldo())
                 .estado(cuenta.getEstado())
                 .identificacion(cuenta.getIdentificacion())
                 .build();
@@ -120,11 +119,13 @@ public class CuentaService {
                         HttpStatus.OK
                 );
             } else {
+                log.error("No existe la cuenta a actualizar");
                 return new ResponseEntity<>(
                         HttpStatus.CONFLICT
                 );
             }
         } catch (Exception e) {
+            log.error("No se pudo actualizar la cuenta " + e);
             return new ResponseEntity<>(
                     HttpStatus.INTERNAL_SERVER_ERROR
             );

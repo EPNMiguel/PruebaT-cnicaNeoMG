@@ -17,7 +17,7 @@ public class ReporteResponse {
     private String nombreCliente;
     private Long numeroCuenta;
     private String tipoCuenta;
-    private Double saldoInicial;
+    private Double saldo;
     private Boolean estado;
     private String TipoMovimiento;
     private Double Valor;

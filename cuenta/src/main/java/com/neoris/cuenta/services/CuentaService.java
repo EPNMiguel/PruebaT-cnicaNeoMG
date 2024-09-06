@@ -5,12 +5,8 @@ import com.neoris.cuenta.entities.Cuenta;
 import com.neoris.cuenta.model.dto.CuentaRequest;
 import com.neoris.cuenta.model.dto.CuentaResponse;
 import com.neoris.cuenta.repositories.CuentaRepository;
-import com.neoris.persona.entities.Cliente;
-import com.neoris.persona.repositories.ClienteRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,19 +40,36 @@ public class CuentaService {
                 }
                 if (!sb.isEmpty() && sb.toString().contains(cuentaRequest.getIdentificacion())) {
                     //si hay cliente
-                    var cuenta = Cuenta.builder()
-                            .numeroCuenta(cuentaRequest.getNumeroCuenta())
-                            .tipoCuenta(cuentaRequest.getTipoCuenta())
-                            .saldoInicial(cuentaRequest.getSaldoInicial())
-                            .estado(cuentaRequest.getEstado())
-                            .identificacion(cuentaRequest.getIdentificacion())
-                            .build();
+                    URL urlC = new URL("http://localhost:8085/api/cuentas");
+                    HttpURLConnection connC = (HttpURLConnection) urlC.openConnection();
+                    connC.setRequestMethod("GET");
+                    connC.connect();
+                    StringBuilder sbC = new StringBuilder();
+                    Scanner scannerC = new Scanner(urlC.openStream());
+                    while (scannerC.hasNext()) {
+                        sbC.append(scannerC.nextLine());
+                    }
+                    if (sbC.isEmpty() || sbC.toString().contains(cuentaRequest.getNumeroCuenta().toString())) {
+                        //ya existe la cuenta
+                        log.info("Ya existe la cuenta");
+                        return new ResponseEntity<>(
+                                HttpStatus.CONFLICT
+                        );
+                    } else {
+                        var cuenta = Cuenta.builder()
+                                .numeroCuenta(cuentaRequest.getNumeroCuenta())
+                                .tipoCuenta(cuentaRequest.getTipoCuenta())
+                                .saldoInicial(cuentaRequest.getSaldoInicial())
+                                .estado(cuentaRequest.getEstado())
+                                .identificacion(cuentaRequest.getIdentificacion())
+                                .build();
 
-                    cuentaRepository.save(cuenta);
-                    log.info("Cuenta Creada {}", cuenta);
-                    return new ResponseEntity<>(
-                            HttpStatus.OK
-                    );
+                        cuentaRepository.save(cuenta);
+                        log.info("Cuenta Creada {}", cuenta.getNumeroCuenta());
+                        return new ResponseEntity<>(
+                                HttpStatus.OK
+                        );
+                    }
                 } else {
                     //No hay cliente
                     log.info("Cliente no registrado");

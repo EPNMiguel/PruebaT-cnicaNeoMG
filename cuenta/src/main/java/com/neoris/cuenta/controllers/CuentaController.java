@@ -19,7 +19,7 @@ public class CuentaController {
     private final CuentaService cuentaService;
 
     @PostMapping
-    public ResponseEntity<Object> createCuenta(@RequestBody CuentaRequest cuentaRequest) {
+    public String createCuenta(@RequestBody CuentaRequest cuentaRequest) {
         return this.cuentaService.addCuenta(cuentaRequest);
     }
 
@@ -30,7 +30,7 @@ public class CuentaController {
     }
 
     @PutMapping
-    public ResponseEntity<Object> updateCuenta(@RequestBody Cuenta cuenta) {
+    public String updateCuenta(@RequestBody Cuenta cuenta) {
         return cuentaService.updateCuenta(cuenta);
     }
 

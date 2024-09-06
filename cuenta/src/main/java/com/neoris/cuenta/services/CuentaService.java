@@ -24,7 +24,7 @@ public class CuentaService {
     private final CuentaRepository cuentaRepository;
 
 
-    public ResponseEntity<Object> addCuenta(CuentaRequest cuentaRequest) {
+    public String addCuenta(CuentaRequest cuentaRequest) {
         try {
             try {
                 //traigo cliente con cedula
@@ -51,9 +51,7 @@ public class CuentaService {
                     if (sbC.isEmpty() || sbC.toString().contains(cuentaRequest.getNumeroCuenta().toString())) {
                         //ya existe la cuenta
                         log.info("Ya existe la cuenta");
-                        return new ResponseEntity<>(
-                                HttpStatus.CONFLICT
-                        );
+                        return "{\"message\":\"Ya existe la cuenta\",\"code\":1}";
                     } else {
                         var cuenta = Cuenta.builder()
                                 .numeroCuenta(cuentaRequest.getNumeroCuenta())
@@ -65,31 +63,23 @@ public class CuentaService {
 
                         cuentaRepository.save(cuenta);
                         log.info("Cuenta Creada {}", cuenta.getNumeroCuenta());
-                        return new ResponseEntity<>(
-                                HttpStatus.OK
-                        );
+                        return "{\"message\":\"Cuenta " + cuenta.getNumeroCuenta() + " creada\",\"code\":0}";
                     }
                 } else {
                     //No hay cliente
                     log.info("Cliente no registrado");
-                    return new ResponseEntity<>(
-                            HttpStatus.CONFLICT
-                    );
+                    return "{\"message\":\"Cliente no registrado\",\"code\":1}";
                 }
             } catch (Exception e) {
 
                 log.error("No se puede crear cuenta " + e);
-                return new ResponseEntity<>(
-                        HttpStatus.INTERNAL_SERVER_ERROR
-                );
+                return "{\"message\":\"No se puede crear cuenta " + e + "\",\"code\":1}";
             }
 
 
         } catch (Exception e) {
             log.error("No se pudo crear cuenta :" + e);
-            return new ResponseEntity<>(
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            return "{\"message\":\"No se puede crear cuenta " + e + "\",\"code\":1}";
         }
     }
 
@@ -109,26 +99,20 @@ public class CuentaService {
 
     }
 
-    public ResponseEntity<Object> updateCuenta(Cuenta cuenta) {
+    public String updateCuenta(Cuenta cuenta) {
         try {
             Optional<Cuenta> res = cuentaRepository.findById(cuenta.getNumeroCuenta());
             if (!res.isEmpty()) {
                 cuenta.setIdentificacion(res.get().getIdentificacion());
                 cuentaRepository.save(cuenta);
-                return new ResponseEntity<>(
-                        HttpStatus.OK
-                );
+                return "{\"message\":\"Actualizado con éxito\",\"code\":0}";
             } else {
                 log.error("No existe la cuenta a actualizar");
-                return new ResponseEntity<>(
-                        HttpStatus.CONFLICT
-                );
+                return "{\"message\":\"No existe la cuenta a actualizar\",\"code\":0}";
             }
         } catch (Exception e) {
             log.error("No se pudo actualizar la cuenta " + e);
-            return new ResponseEntity<>(
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            return "{\"message\":\"\"No se pudo actualizar la cuenta " + e + "\",\"code\":0}";
         }
     }
 }

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ReporteResponse {
     private Long idMovimiento;
-    private LocalDateTime fechaMovimiento;
+    private LocalDate fechaMovimiento;
     private String identificacionCliente;
     private String nombreCliente;
     private Long numeroCuenta;

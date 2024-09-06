@@ -57,7 +57,14 @@ public class ClienteService {
 
     public List<ClienteResponse> getAllClientes() {
         var clientes = clienteRepository.findAll();
-        return clientes.stream().map(this::mapToClientesResponse).toList();
+        List<ClienteResponse> response = clientes.stream().map(this::mapToClientesResponse).toList();
+        for (ClienteResponse cliente : response) {
+            cliente.setContrasenia(cliente.getContrasenia().replaceAll(".", "*"));
+
+            // Agrega más lógica según tus necesidades
+        }
+
+        return response;
     }
 
     private ClienteResponse mapToClientesResponse(Cliente cliente) {

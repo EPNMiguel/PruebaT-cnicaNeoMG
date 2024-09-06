@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class ReporteResponse {
+    private Long idMovimiento;
     private LocalDateTime fechaMovimiento;
     private String identificacionCliente;
     private String nombreCliente;
@@ -19,7 +20,6 @@ public class ReporteResponse {
     private String tipoCuenta;
     private Double saldo;
     private Boolean estado;
-    private String TipoMovimiento;
-    private Double Valor;
-    private Double Saldo;
+    private String tipoMovimiento;
+    private Double valor;
 }

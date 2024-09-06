@@ -6,8 +6,8 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ms-neoris
-      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: mgneoris
+      MYSQL_PASSWORD: admin
       MYSQL_ALLOW_EMPTY_PASSWORD: true
       MYSQL_RANDOM_ROOT_PASSWORD: root
       ports:
